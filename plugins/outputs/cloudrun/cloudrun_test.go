@@ -2,7 +2,7 @@ package cloudrun
 
 import (
 	"github.com/influxdata/telegraf"
-	"github.com/influxdata/telegraf/internal"
+	"github.com/influxdata/telegraf/config"
 	"github.com/influxdata/telegraf/plugins/serializers/influx"
 	"github.com/influxdata/telegraf/testutil"
 	"testing"
@@ -12,7 +12,7 @@ import (
 func defaultCloudrun() *CloudRun {
 	return &CloudRun{
 		URL:          defaultURL,
-		Timeout:      internal.Duration{Duration: defaultClientTimeout},
+		Timeout:      config.Duration(defaultClientTimeout),
 		Method:       defaultMethod,
 		ConvertPaths: true,
 	}
@@ -61,58 +61,6 @@ func TestCloudRun_Connect(t *testing.T) {
 func TestCloudRun_Write(t *testing.T) {
 	cr := defaultCloudrun()
 
-	// http_test example
-	//
-	//tests := []struct {
-	//	name       string
-	//	plugin     *HTTP
-	//	statusCode int
-	//	errFunc    func(t *testing.T, err error)
-	//}{
-	//	{
-	//		name: "success",
-	//		plugin: &HTTP{
-	//			URL: u.String(),
-	//		},
-	//		statusCode: http.StatusOK,
-	//		errFunc: func(t *testing.T, err error) {
-	//			require.NoError(t, err)
-	//		},
-	//	}
-	//}
-	//
-	// kafka_test example
-	//
-	//tests := []struct {
-	//  name   string
-	//  plugin *Kafka
-	//  input  []telegraf.Metric
-	//  topic  string
-	//  value  string
-	// }{
-	//	{
-	//		name: "static topic",
-	//		plugin: &Kafka{
-	//			Brokers:      []string{"127.0.0.1"},
-	//			Topic:        "telegraf",
-	//			producerFunc: NewMockProducer,
-	//		},
-	//		input: []telegraf.Metric{
-	//			testutil.MustMetric(
-	//				"cpu",
-	//				map[string]string{},
-	//				map[string]interface{}{
-	//					"time_idle": 42.0,
-	//				},
-	//				time.Unix(0, 0),
-	//			),
-	//		},
-	//		topic: "telegraf",
-	//		value: "cpu time_idle=42 0\n",
-	//	}
-	//}
-
-	// TODO:
 	tests := []struct {
 		name    string
 		metrics []telegraf.Metric

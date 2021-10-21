@@ -5,6 +5,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/golang-jwt/jwt"
+	"github.com/influxdata/telegraf/config"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -63,8 +64,7 @@ const (
 
 type CloudRun struct {
 	URL string `toml:"url"`
-	//URLOverRide     string            `toml:"base_url_over_ride"`
-	Timeout         internal.Duration `toml:"timeout"`
+	Timeout         config.Duration `toml:"timeout"`
 	Headers         map[string]string `toml:"headers"`
 	JSONSecret      string            `toml:"json_file_location"`
 	GCPEmailAddress string            `toml:"cloudrun_email"`
@@ -95,15 +95,15 @@ func (h *CloudRun) createHTTPClient(ctx context.Context) (*http.Client, error) {
 			TLSClientConfig: tlsCfg,
 			Proxy:           http.ProxyFromEnvironment,
 		},
-		Timeout: h.Timeout.Duration,
+		Timeout: time.Duration(h.Timeout),
 	}
 
 	return client, nil
 }
 
 func (h *CloudRun) Connect() error {
-	if h.Timeout.Duration == 0 {
-		h.Timeout.Duration = defaultClientTimeout
+	if h.Timeout == 0 {
+		h.Timeout = config.Duration(defaultClientTimeout)
 	}
 
 	ctx := context.Background()
@@ -190,9 +190,9 @@ func (h *CloudRun) write(reqBody []byte) error {
 func init() {
 	outputs.Add("cloudrun", func() telegraf.Output {
 		return &CloudRun{
-			Timeout: internal.Duration{Duration: defaultClientTimeout},
 			Method:  defaultMethod,
 			URL:     defaultURL,
+			Timeout: config.Duration(defaultClientTimeout),
 		}
 	})
 }
