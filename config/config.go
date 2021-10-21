@@ -1536,6 +1536,8 @@ func (c *Config) buildSerializer(tbl *ast.Table) (serializers.Serializer, error)
 	c.getFieldBool(tbl, "prometheus_sort_metrics", &sc.PrometheusSortMetrics)
 	c.getFieldBool(tbl, "prometheus_string_as_label", &sc.PrometheusStringAsLabel)
 
+	c.getFieldBool(tbl, "convert_paths", &sc.WavefrontConvertPaths)
+
 	if c.hasErrs() {
 		return nil, c.firstErr()
 	}
