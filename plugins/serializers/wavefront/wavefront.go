@@ -7,14 +7,13 @@ import (
 	"sync"
 
 	"github.com/influxdata/telegraf"
-	"github.com/influxdata/telegraf/plugins/outputs/wavefront"
+	"github.com/influxdata/telegraf/plugins/outputs/wavefront" // TODO: this dependency is going the wrong way: Move MetricPoint into the serializer.
 )
 
 // WavefrontSerializer : WavefrontSerializer struct
 type WavefrontSerializer struct {
 	Prefix         string
 	UseStrict      bool
-	ConvertPaths   bool
 	SourceOverride []string
 	scratch        buffer
 	mu             sync.Mutex // buffer mutex
@@ -41,17 +40,16 @@ var tagValueReplacer = strings.NewReplacer("\"", "\\\"", "*", "-")
 
 var pathReplacer = strings.NewReplacer("_", ".")
 
-func NewSerializer(prefix string, useStrict bool, sourceOverride []string, convertPaths bool) (*WavefrontSerializer, error) {
+func NewSerializer(prefix string, useStrict bool, sourceOverride []string) (*WavefrontSerializer, error) {
 	s := &WavefrontSerializer{
 		Prefix:         prefix,
 		UseStrict:      useStrict,
 		SourceOverride: sourceOverride,
-		ConvertPaths:   convertPaths,
 	}
 	return s, nil
 }
 
-func (s *WavefrontSerializer) serialize(buf *buffer, m telegraf.Metric) {
+func (s *WavefrontSerializer) serialize(m telegraf.Metric) {
 	const metricSeparator = "."
 
 	for fieldName, value := range m.Fields() {
@@ -69,9 +67,7 @@ func (s *WavefrontSerializer) serialize(buf *buffer, m telegraf.Metric) {
 			name = sanitizedChars.Replace(name)
 		}
 
-		if s.ConvertPaths == true {
-			name = pathReplacer.Replace(name)
-		}
+		name = pathReplacer.Replace(name)
 
 		metricValue, valid := buildValue(value, name)
 		if !valid {
@@ -94,7 +90,7 @@ func (s *WavefrontSerializer) serialize(buf *buffer, m telegraf.Metric) {
 func (s *WavefrontSerializer) Serialize(m telegraf.Metric) ([]byte, error) {
 	s.mu.Lock()
 	s.scratch.Reset()
-	s.serialize(&s.scratch, m)
+	s.serialize(m)
 	out := s.scratch.Copy()
 	s.mu.Unlock()
 	return out, nil
@@ -104,7 +100,7 @@ func (s *WavefrontSerializer) SerializeBatch(metrics []telegraf.Metric) ([]byte,
 	s.mu.Lock()
 	s.scratch.Reset()
 	for _, m := range metrics {
-		s.serialize(&s.scratch, m)
+		s.serialize(m)
 	}
 	out := s.scratch.Copy()
 	s.mu.Unlock()
