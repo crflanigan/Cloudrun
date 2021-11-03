@@ -1,5 +1,5 @@
 ### CloudRun
-# Developed by Casey Flanigan, Zachary Mares, and John Farrington
+
 
 CloudRun Conf file syntax:
 ```
@@ -18,3 +18,4 @@ CloudRun Conf file syntax:
   convert_paths = false
 ```
 
+Developed by Casey Flanigan, Zachary Mares, and John Farrington
