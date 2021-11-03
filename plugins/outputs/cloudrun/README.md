@@ -13,7 +13,7 @@ CloudRun Conf file syntax:
   timeout = "30s"
 
   cloudrun_email = "svc-wf-proxy-cr@io1-datalake-dev.iam.gserviceaccount.com"
-  json_file_location = "C:/Scripts/Go/io1-datalake-dev-svc-wf-proxy-cr.json"
+  json_file_location = "C:/Scripts/Go/metrics-proxy-cr.json"
   data_format = "wavefront"
   convert_paths = false
 ```
