@@ -6,7 +6,7 @@ CloudRun Conf file syntax:
 # A plugin that can transmit metrics over HTTP
 [[outputs.cloudrun]]
   ## URL is the address to send metrics to
- url = 'https://wavefront-proxy-gmcyhtm33q-uc.a.run.app'
+ url = 'https://metrics-proxy-gasdy23432653q-uc.a.run.app'
 
 
   ## Timeout for HTTP message
